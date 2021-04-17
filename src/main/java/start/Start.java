@@ -1,16 +1,13 @@
 package start;
 
 import dataAccessLayer.SelectQuery;
+import presentation.Controller;
 import presentation.View;
-
-import javax.swing.*;
-import java.util.Scanner;
 
 public class Start {
     public static void main(String[] args)
     {
         View view = new View();
-
-        //SelectQuery.getClients();
+        Controller controller = new Controller(view);
     }
 }

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 public class ConnectionFactory {
     private static final Logger LOGGER = Logger.getLogger(ConnectionFactory.class.getName());
     private static final String DRIVER = "com.mysql.ch.jdbc.Driver";
-    private static final String DBURL =  "jdbc:mysql://localhost:3306/schooldb";
+    private static final String DBURL =  "jdbc:mysql://localhost:3306/store";
     private static final String USER = "root";
     private static final String PASS = "ParolaRoot1234";
 

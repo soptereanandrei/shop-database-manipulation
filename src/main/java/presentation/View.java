@@ -10,11 +10,32 @@ public class View extends JFrame {
     private JPanel views;
 
     private JPanel buttons;
+
+    protected JButton getClientViewButton() {
+        return clientViewButton;
+    }
+    protected JButton getProductViewButton() {
+        return productViewButton;
+    }
+    protected JButton getOrderViewButton() {
+        return orderViewButton;
+    }
     private JButton clientViewButton;
     private JButton productViewButton;
-    private JButton tableViewButton;
+    private JButton orderViewButton;
 
-    private JTextField clientId;
+    protected JButton getClientAddButton() {
+        return clientAddButton;
+    }
+    protected JButton getClientEditButton() {
+        return clientEditButton;
+    }
+    protected JButton getClientDeleteButton() {
+        return clientDeleteButton;
+    }
+    protected JButton getClientViewTableButton() {
+        return clientViewTableButton;
+    }
     private JTextField clientName;
     private JTextField clientAddress;
     private JTextField clientEmail;
@@ -26,7 +47,6 @@ public class View extends JFrame {
     private JTextArea clientLogArea;
     private JTable clientsTable;
 
-    private JTextField productId;
     private JTextField productName;
     private JTextField productCantity;
     private JButton productAddButton;
@@ -41,7 +61,6 @@ public class View extends JFrame {
     private JTextField orderQuantity;
     private JButton createOrderButton;
     private JTextArea orderLogArea;
-    private JTable ordersTable;
 
     public View()
     {
@@ -57,15 +76,43 @@ public class View extends JFrame {
         views.add(createProductsView(viewsDim), "product");
         views.add(createOrdersView(viewsDim), "order");
 
-        //test
-        ((CardLayout)views.getLayout()).show(views, "order");
-
         content.add(views);
 
         add(content);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(1000, 1000);
+        setSize(1125, 1000);
         setVisible(true);
+    }
+
+    protected void changeView(String viewName)
+    {
+        ((CardLayout)views.getLayout()).show(views, viewName);
+    }
+
+    protected String[] wrapClientInputFields()
+    {
+        return new String[] {
+                clientName.getText(),
+                clientAddress.getText(),
+                clientEmail.getText(),
+                clientAge.getText()
+        };
+    }
+
+    protected void printLog(String msg, int viewIndex)
+    {
+        switch (viewIndex)
+        {
+            case 0:
+                clientLogArea.append(msg + "\n");
+                break;
+            case 1:
+                productLogArea.append(msg + "\n");
+                break;
+            case 2:
+                orderLogArea.append(msg + "\n");
+                break;
+        }
     }
 
     private void createButtons()
@@ -79,13 +126,13 @@ public class View extends JFrame {
 
         clientViewButton = createButton("Clients", buttonsDim);
         productViewButton = createButton("Products", buttonsDim);
-        tableViewButton = createButton("Orders", buttonsDim);
+        orderViewButton = createButton("Orders", buttonsDim);
 
         buttons.add(clientViewButton);
         buttons.add(Box.createRigidArea(new Dimension(10, 100)));
         buttons.add(productViewButton);
         buttons.add(Box.createRigidArea(new Dimension(10, 100)));
-        buttons.add(tableViewButton);
+        buttons.add(orderViewButton);
 
         buttons.setLayout(new FlowLayout());
         ((FlowLayout)buttons.getLayout()).setAlignment(FlowLayout.LEFT);
@@ -133,13 +180,11 @@ public class View extends JFrame {
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
 
         Dimension textFieldDim = new Dimension(200, 30);
-        clientId = createJTextField(textFieldDim);
         clientName = createJTextField(textFieldDim);
         clientAddress = createJTextField(textFieldDim);
         clientEmail = createJTextField(textFieldDim);
         clientAge = createJTextField(textFieldDim);
 
-        inputPanel.add(createInputRow("Client ID:             ", clientId));
         inputPanel.add(createInputRow("Client Name:      ", clientName));
         inputPanel.add(createInputRow("Client Address: ", clientAddress));
         inputPanel.add(createInputRow("Client Email:       ", clientEmail));
@@ -209,7 +254,7 @@ public class View extends JFrame {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Product ID");
         model.addColumn("Product Name");
-        model.addColumn("Product Quntity");
+        model.addColumn("Product Quantity");
         productsTable = new JTable(model);
         productsView.add(new JScrollPane(productsTable));
 
@@ -225,13 +270,11 @@ public class View extends JFrame {
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
 
         Dimension textFieldDim = new Dimension(200, 30);
-        productId = createJTextField(textFieldDim);
         productName = createJTextField(textFieldDim);
         productCantity = createJTextField(textFieldDim);
 
-        inputPanel.add(createInputRow("Product ID:           ", productId));
-        inputPanel.add(createInputRow("Product Name:    ", productName));
-        inputPanel.add(createInputRow("Product Cantity:  ", productCantity));
+        inputPanel.add(createInputRow("Product Name:       ", productName));
+        inputPanel.add(createInputRow("Product Quantity:  ", productCantity));
 
         inputPanel.setAlignmentX(0.0f);
         return inputPanel;
