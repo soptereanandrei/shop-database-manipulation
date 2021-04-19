@@ -1,14 +1,17 @@
 package presentation;
 
 import bussinessLayer.InputChecker;
-import bussinessLayer.TableCreator;
+import dataAccessLayer.AbstractDAO;
 import dataAccessLayer.DBUtils;
 import model.Client;
+import model.Product;
 
+import javax.swing.*;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
@@ -26,6 +29,10 @@ public class Controller {
         view.getClientEditButton().addActionListener(new EditClientListener());
         view.getClientDeleteButton().addActionListener(new DeleteClientListener());
         view.getClientViewTableButton().addActionListener(new ShowClientTableListener());
+        view.getProductAddButton().addActionListener(new AddProductListener());
+        view.getProductEditButton().addActionListener(new EditProductListener());
+        view.getProductDeleteButton().addActionListener(new DeleteProductListener());
+        view.getProductViewTableButton().addActionListener(new ShowProductTableListener());
     }
 
     class ClientsViewListener implements ActionListener
@@ -57,22 +64,14 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             String[] input = view.wrapClientInputFields();
-            Client c = null;
             try {
-                c = InputChecker.checkNewClient(input);
-            }
-            catch (Exception exception)
-            {
-                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
-            }
-
-            try {
+                Client c = InputChecker.checkNewClient(input);
                 String msg = DBUtils.addNewObject(c);
                 view.printLog(msg, 0);
             }
             catch (Exception exception)
             {
-                view.printLog(exception.getMessage(), 0);
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
             }
         }
     }
@@ -82,22 +81,14 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             String[] input = view.wrapClientInputFields();
-            Client c = null;
             try {
-                c = InputChecker.checkEditableClient(input);
-            }
-            catch (Exception exception)
-            {
-                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
-            }
-
-            try {
+                Client c = InputChecker.checkEditableClient(input);
                 String msg = DBUtils.editObject(c);
                 view.printLog(msg, 0);
             }
             catch (Exception exception)
             {
-                view.printLog(exception.getMessage(), 0);
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
             }
         }
     }
@@ -107,22 +98,14 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             String[] input = view.wrapClientInputFields();
-            Client c = null;
             try {
-                c = InputChecker.checkEditableClient(input);
-            }
-            catch (Exception exception)
-            {
-                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
-            }
-
-            try {
+                Client c = InputChecker.checkEditableClient(input);
                 String msg = DBUtils.deleteObject(c);
                 view.printLog(msg, 0);
             }
             catch (Exception exception)
             {
-                view.printLog(exception.getMessage(), 0);
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 0);
             }
         }
     }
@@ -132,12 +115,84 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                ResultSet rs = DBUtils.getTable("client");
-                TableCreator.createTable(null, rs);
+                Class<Client> objectType = Client.class;
+                ResultSet rs = DBUtils.getTable(objectType.getSimpleName());
+                List<Client> clients = AbstractDAO.createObjects(objectType, rs);
+                TableModel tableModel = AbstractDAO.createTable(objectType, clients);
+                view.setTable(tableModel, 0);
             }
             catch (Exception exception)
             {
                 view.printLog(exception.getMessage(), 0);
+            }
+        }
+    }
+
+    class AddProductListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String[] input = view.wrapProductInputFields();
+            try {
+                Product p = InputChecker.checkProduct(input);
+                String msg = DBUtils.addNewObject(p);
+                view.printLog(msg, 1);
+            }
+            catch (Exception exception)
+            {
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 1);
+            }
+        }
+    }
+
+    class EditProductListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String[] input = view.wrapProductInputFields();
+            try {
+                Product p = InputChecker.checkProduct(input);
+                String msg = DBUtils.editObject(p);
+                view.printLog(msg, 1);
+            }
+            catch (Exception exception)
+            {
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 1);
+            }
+        }
+    }
+
+    class DeleteProductListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String[] input = view.wrapProductInputFields();
+            try {
+                Product p = InputChecker.checkProduct(input);
+                String msg = DBUtils.deleteObject(p);
+                view.printLog(msg, 1);
+            }
+            catch (Exception exception)
+            {
+                view.printLog("Invalid input : " + exception.getMessage() + "\n", 1);
+            }
+        }
+    }
+
+    class ShowProductTableListener implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                Class<Product> objectType = Product.class;
+                ResultSet rs = DBUtils.getTable(objectType.getSimpleName());
+                List<Product> clients = AbstractDAO.createObjects(objectType, rs);
+                TableModel tableModel = AbstractDAO.createTable(objectType, clients);
+                view.setTable(tableModel, 1);
+            }
+            catch (Exception exception)
+            {
+                view.printLog(exception.getMessage(), 1);
             }
         }
     }

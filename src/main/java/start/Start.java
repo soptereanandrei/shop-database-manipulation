@@ -1,6 +1,5 @@
 package start;
 
-import dataAccessLayer.SelectQuery;
 import presentation.Controller;
 import presentation.View;
 

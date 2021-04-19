@@ -1,6 +1,7 @@
 package bussinessLayer;
 
 import model.Client;
+import model.Product;
 
 import java.lang.reflect.Field;
 import java.net.Inet4Address;
@@ -63,6 +64,24 @@ public class InputChecker {
             age = Integer.parseInt(validInput[3]);
 
         return new Client(validInput[0], validInput[1], validInput[2], age);
+    }
+
+    /**
+     * Method check if input represents valid informations of a new product
+     * @param input array of string which represent input from GUI
+     * @return a Product with valid informations
+     * @throws Exception if have not valid input method throws a Exception
+     */
+    public static Product checkProduct(String[] input) throws Exception
+    {
+        if (input[0].isBlank())
+            throw new Exception("Invalid product name");
+
+        int quantity = Integer.parseInt(input[1]);
+        if (quantity < 0)
+            throw new Exception("Invalid quantity, must be positive");
+
+        return new Product(input[0], quantity);
     }
 
     /**

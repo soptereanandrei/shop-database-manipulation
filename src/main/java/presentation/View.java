@@ -1,6 +1,7 @@
 package presentation;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class View extends JFrame {
@@ -47,6 +48,19 @@ public class View extends JFrame {
     private JTextArea clientLogArea;
     private JTable clientsTable;
 
+
+    public JButton getProductAddButton() {
+        return productAddButton;
+    }
+    public JButton getProductEditButton() {
+        return productEditButton;
+    }
+    public JButton getProductDeleteButton() {
+        return productDeleteButton;
+    }
+    public JButton getProductViewTableButton() {
+        return productViewTableButton;
+    }
     private JTextField productName;
     private JTextField productCantity;
     private JButton productAddButton;
@@ -97,6 +111,27 @@ public class View extends JFrame {
                 clientEmail.getText(),
                 clientAge.getText()
         };
+    }
+
+    protected String[] wrapProductInputFields()
+    {
+        return new String[] {
+                productName.getText(),
+                productCantity.getText()
+        };
+    }
+
+    protected void setTable(TableModel model, int viewIndex)
+    {
+        switch (viewIndex)
+        {
+            case 0:
+                clientsTable.setModel(model);
+                break;
+            case 1:
+                productsTable.setModel(model);
+                break;
+        }
     }
 
     protected void printLog(String msg, int viewIndex)

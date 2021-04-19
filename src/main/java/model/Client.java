@@ -6,6 +6,22 @@ public class Client {
     private String email;
     private int age;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public String getName() {
         return name;
     }
@@ -20,6 +36,11 @@ public class Client {
 
     public int getAge() {
         return age;
+    }
+
+    public Client()
+    {
+
     }
 
     public Client(String name, String address, String email, int age)

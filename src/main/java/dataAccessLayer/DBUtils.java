@@ -36,7 +36,7 @@ public class DBUtils {
         for (int i = 0; i < fields.length; i++)
         {
             fields[i].setAccessible(true);
-            setValue(statement, i + 1, fields[i], o);
+            statement.setObject(i + 1, fields[i].get(o));
         }
 
         int row = statement.executeUpdate();
@@ -73,7 +73,7 @@ public class DBUtils {
         {
             if (InputChecker.checkField(fields[i], o))
             {
-                setValue(statement, pos, fields[i], o);
+                statement.setObject(pos, fields[i].get(o));
                 pos++;
             }
         }
@@ -105,7 +105,7 @@ public class DBUtils {
         int pos = 1;
         for (Field field : fields) {
             if (InputChecker.checkField(field, o)) {
-                setValue(statement, pos, field, o);
+                statement.setObject(pos, field.get(o));
                 pos++;
             }
         }
@@ -146,7 +146,7 @@ public class DBUtils {
         int pos = 1;
         for (Field field : fields) {
             if (InputChecker.checkField(field, o)) {
-                setValue(statement, pos, field, o);
+                statement.setObject(pos, field.get(o));
                 pos++;
             }
         }
@@ -244,6 +244,7 @@ public class DBUtils {
         return sb.toString();
     }
 
+    /*
     private static void setValue(PreparedStatement statement, int i, Field field, Object o) throws Exception
     {
         Class statementClass = statement.getClass();
@@ -254,5 +255,5 @@ public class DBUtils {
                 "set" + fieldTypeName,
                 int.class, field.getType());
         setMethod.invoke(statement, i, field.get(o));
-    }
+    }*/
 }
