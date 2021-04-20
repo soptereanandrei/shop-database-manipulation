@@ -3,7 +3,6 @@ package dataAccessLayer;
 import bussinessLayer.InputChecker;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,9 +25,6 @@ public class DBUtils {
         Field[] fields = objClass.getDeclaredFields();
         for (Field f : fields)
             f.setAccessible(true);
-
-        if (findObject(o, fields))
-            return o.toString() + "already exits";
 
         String query = createInsertQuery(objClass, fields);
         statement = con.prepareStatement(query);
@@ -87,6 +83,12 @@ public class DBUtils {
         return result + "Don't found any object : " + o.toString();
     }
 
+    /**
+     * Method delete a object from database
+     * @param o object to delete
+     * @return a message of delete status
+     * @throws Exception
+     */
     public static String deleteObject(Object o) throws Exception
     {
         Class objClass = o.getClass();
@@ -113,11 +115,44 @@ public class DBUtils {
         int row = statement.executeUpdate();
         ConnectionFactory.close(statement);
 
-
         String result = "Row affected : " + row + "\n";
         if (row > 0)
             return result + "Succesfully delete : " + o.toString();
         return result + "Don't found any object : " + o.toString();
+    }
+
+    /**
+     * Method search for a object in database
+     * @param o the object which is search
+     * @return a ResultSet with matches
+     * @throws Exception
+     */
+    public static ResultSet findObject(Object o) throws Exception
+    {
+        Class objectClass = o.getClass();
+        Connection con = ConnectionFactory.getConnection();
+        if (con == null)
+            throw new Exception("Cannot create connection to database\n");
+
+        PreparedStatement statement;
+        Field[] fields = objectClass.getDeclaredFields();
+        for (Field field : fields)
+            field.setAccessible(true);
+
+        String query = createSelectQuery(o, fields);
+        statement = con.prepareStatement(query);
+
+        int pos = 1;
+        for (Field field : fields) {
+            if (InputChecker.checkField(field, o)) {
+                statement.setObject(pos, field.get(o));
+                pos++;
+            }
+        }
+
+        ResultSet resultSet = statement.executeQuery();
+
+        return resultSet;
     }
 
     /**
@@ -132,31 +167,9 @@ public class DBUtils {
         String query = "SELECT * FROM " + tableName + ";";
         PreparedStatement statement = con.prepareStatement(query);
 
-        return statement.executeQuery();
-    }
+        ResultSet resultSet = statement.executeQuery();
 
-    private static boolean findObject(Object o, Field[] fields) throws Exception
-    {
-        PreparedStatement statement;
-        Connection con = ConnectionFactory.getConnection();
-
-        String query = createSelectQuery(o, fields);
-        statement = con.prepareStatement(query);
-
-        int pos = 1;
-        for (Field field : fields) {
-            if (InputChecker.checkField(field, o)) {
-                statement.setObject(pos, field.get(o));
-                pos++;
-            }
-        }
-
-        ResultSet rs = statement.executeQuery();
-        boolean find = rs.next();
-        ConnectionFactory.close(rs);
-        ConnectionFactory.close(statement);
-
-        return find;
+        return resultSet;
     }
 
     private static String createInsertQuery(Class objectClass, Field[] fields)
@@ -165,7 +178,7 @@ public class DBUtils {
         int i;
 
         sb.append("INSERT INTO ");
-        sb.append(objectClass.getSimpleName());
+        sb.append("store." + objectClass.getSimpleName());
         sb.append(" (");
         for (i = 0; i < fields.length - 1; i++)
             sb.append(fields[i].getName() + ", ");
@@ -228,7 +241,7 @@ public class DBUtils {
         StringBuilder sb = new StringBuilder();
         int countAppends = 0;
 
-        sb.append("SELECT id FROM ");
+        sb.append("SELECT * FROM ");
         sb.append(o.getClass().getSimpleName());
         sb.append(" WHERE ");
         for (Field field : fields) {

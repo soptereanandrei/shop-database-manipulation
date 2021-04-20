@@ -49,16 +49,16 @@ public class View extends JFrame {
     private JTable clientsTable;
 
 
-    public JButton getProductAddButton() {
+    protected JButton getProductAddButton() {
         return productAddButton;
     }
-    public JButton getProductEditButton() {
+    protected JButton getProductEditButton() {
         return productEditButton;
     }
-    public JButton getProductDeleteButton() {
+    protected JButton getProductDeleteButton() {
         return productDeleteButton;
     }
-    public JButton getProductViewTableButton() {
+    protected JButton getProductViewTableButton() {
         return productViewTableButton;
     }
     private JTextField productName;
@@ -70,8 +70,11 @@ public class View extends JFrame {
     private JTextArea productLogArea;
     private JTable productsTable;
 
-    private JTextField orderProductName;
-    private JTextField orderClientName;
+    protected JButton getCreateOrderButton() {
+        return createOrderButton;
+    }
+    private JComboBox<String> orderProductName;
+    private JComboBox<String> orderClientName;
     private JTextField orderQuantity;
     private JButton createOrderButton;
     private JTextArea orderLogArea;
@@ -121,6 +124,15 @@ public class View extends JFrame {
         };
     }
 
+    protected String[] wrapOrderInputFields()
+    {
+        return new String[] {
+                (String)orderProductName.getSelectedItem(),
+                (String)orderClientName.getSelectedItem(),
+                orderQuantity.getText()
+        };
+    }
+
     protected void setTable(TableModel model, int viewIndex)
     {
         switch (viewIndex)
@@ -147,6 +159,19 @@ public class View extends JFrame {
             case 2:
                 orderLogArea.append(msg + "\n");
                 break;
+        }
+    }
+
+    protected void setAvailableClientsAndProductsToOrder(String[] clientsName, String[] productsName)
+    {
+        if (clientsName != null) {
+            DefaultComboBoxModel<String> clientsModel = new DefaultComboBoxModel<>(clientsName);
+            orderClientName.setModel(clientsModel);
+        }
+
+        if (productsName != null) {
+            DefaultComboBoxModel<String> productsModel = new DefaultComboBoxModel<>(productsName);
+            orderProductName.setModel(productsModel);
         }
     }
 
@@ -384,8 +409,8 @@ public class View extends JFrame {
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
 
         Dimension textFieldDim = new Dimension(200, 30);
-        orderProductName = createJTextField(textFieldDim);
-        orderClientName = createJTextField(textFieldDim);
+        orderProductName = createJComboBox(textFieldDim);
+        orderClientName = createJComboBox(textFieldDim);
         orderQuantity = createJTextField(textFieldDim);
 
         inputPanel.add(createInputRow("Product Name:  ", orderProductName));
@@ -429,8 +454,15 @@ public class View extends JFrame {
         return f;
     }
 
+    private JComboBox createJComboBox(Dimension d)
+    {
+        JComboBox<String> b = new JComboBox<>();
+        b.setPreferredSize(d);
+        b.setMaximumSize(d);
+        return  b;
+    }
 
-    private JPanel createInputRow(String name, JTextField textField)
+    private JPanel createInputRow(String name, JComponent textField)
     {
         JPanel rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));

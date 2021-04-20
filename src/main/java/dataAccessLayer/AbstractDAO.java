@@ -17,7 +17,7 @@ import java.util.List;
 public class AbstractDAO {
 
     /**
-     * Method create a table from ResultSet and print to table
+     * git s
      * @param type class of the objects type
      * @param resultSet the ResultSet from database
      */
@@ -60,6 +60,14 @@ public class AbstractDAO {
         return null;
     }
 
+    /**
+     * Method create from a list of objects a table
+     * @param type class of the objects type
+     * @param objects list of objects
+     * @param <T> type
+     * @return a TableModel
+     * @throws Exception
+     */
     public static <T> TableModel createTable(Class<T> type, List<T> objects) throws Exception
     {
         DefaultTableModel model = new DefaultTableModel();
